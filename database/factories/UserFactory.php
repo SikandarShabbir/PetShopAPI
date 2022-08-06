@@ -19,17 +19,17 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'uuid'              => fake()->uuid(),
-            'first_name'        => fake()->name(),
-            'last_name'         => fake()->name(),
-            'is_admin'          => 0,
-            'email'             => fake()->unique()->safeEmail(),
+            'uuid' => fake()->uuid,
+            'first_name' => fake()->name(),
+            'last_name' => fake()->name(),
+            'is_admin' => rand(0,1),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password'          => Hash::make('password'),
-            'avatar'            => fake()->uuid(),
-            'address'           => fake()->address(),
-            'phone_number'      => fake()->phoneNumber(),
-            'is_marketing'      => fake()->numberBetween(0, 1)
+            'password' => Hash::make('password'),
+            'avatar' => fake()->uuid,
+            'address' => fake()->address,
+            'phone_number' => fake()->phoneNumber,
+            'is_marketing' => rand(0,1)
         ];
     }
 
@@ -40,12 +40,10 @@ class UserFactory extends Factory
      */
     public function unverified()
     {
-        return $this->state(
-            function (array $attributes) {
-                return [
-                    'email_verified_at' => null,
-                ];
-            }
-        );
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
     }
 }
