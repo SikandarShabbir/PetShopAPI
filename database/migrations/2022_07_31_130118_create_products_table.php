@@ -16,7 +16,7 @@ return new class extends Migration {
             'products',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->char('uuid', 36);
+                $table->uuid('uuid');
                 $table->foreignId('category_id')->nullable()->constrained()
                     ->nullOnDelete();
                 $table->string('title');

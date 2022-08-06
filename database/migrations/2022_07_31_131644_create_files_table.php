@@ -16,7 +16,7 @@ return new class extends Migration {
             'files',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->char('uuid', 36);
+                $table->uuid('uuid');
                 $table->string('name');
                 $table->string('path');
                 $table->string('size');
