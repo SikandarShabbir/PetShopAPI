@@ -3,7 +3,13 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -12,9 +18,10 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
-    protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-    ];
+    protected $policies
+        = [
+            // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        ];
 
     /**
      * Register any authentication / authorization services.
@@ -25,6 +32,23 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Auth::viaRequest(
+            'jwt',
+            function (Request $request) {
+                try {
+                    $tokenPayload = JWT::decode(
+                        $request->bearerToken(),
+                        new Key(
+                            config('jwt.key'),
+                            'HS256'
+                        )
+                    );
+                    return User::where('uuid', $tokenPayload->user_uuid)->first(
+                    );
+                } catch (\Exception $exception) {
+                    return null;
+                }
+            }
+        );
     }
 }
