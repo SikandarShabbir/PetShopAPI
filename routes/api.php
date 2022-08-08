@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,12 +14,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
-Route::prefix('v1')->group(function (){
-    Route::get('/', function (){
-        return "Hello";
-    });
-});
+Route::prefix('v1/admin')->name('admin.')->group(
+    function (): void {
+        Route::post('/login', [UserController::class, 'login'])->name('login');
+        Route::post('/create', [UserController::class, 'store'])->name(
+            'store'
+        );
+        Route::get('/logout', [UserController::class, 'logout'])->name(
+            'logout'
+        );
+        Route::middleware(['jwt:admin'])->group(
+            function (): void {
+                Route::get('/user-listing', [UserController::class, 'index'])
+                    ->name('index');
+                Route::put(
+                    '/user-edit/{uuid}',
+                    [UserController::class, 'update']
+                )->name('update');
+                Route::delete(
+                    '/user-delete/{uuid}',
+                    [UserController::class, 'destroy']
+                )->name('destroy');
+            }
+        );
+    }
+);
