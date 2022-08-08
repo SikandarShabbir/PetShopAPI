@@ -3,9 +3,16 @@
 namespace App\Models;
 
 use App\Common\HasUuid;
+use App\Http\Requests\User\IndexRequest;
+use App\Http\Requests\User\StoreRequest;
+use App\Http\Requests\User\UpdateRequest;
+use Firebase\JWT\JWT;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -91,6 +98,7 @@ class User extends Authenticatable
             'remember_token',
             'id',
             'avatar',
+            'is_admin'
         ];
 
     /**
@@ -108,6 +116,96 @@ class User extends Authenticatable
         return new Attribute(
             fn($value) => $value,
             fn($value) => bcrypt($value),
+        );
+    }
+
+    public function storeUser(StoreRequest $request): array
+    {
+        $user = $this->create(
+            $request->validated() + ['is_admin' => 1]
+        );
+        return [
+            ...$user->toArray(),
+            'token' => $this->refreshToken($request),
+        ];
+    }
+
+    public function isAdmin(): Attribute
+    {
+        return new Attribute(
+            fn($value) => ['user', 'admin'][$value]
+        );
+    }
+
+    public function onlyUsers(): Builder
+    {
+        return $this->where('is_admin', 0);
+    }
+
+    public function getFilteredUsers(IndexRequest $request
+    ): LengthAwarePaginator {
+        return $this->onlyUsers()
+            ->when(
+                collect($this->getFillable())->contains($request->sortBy),
+                fn($q) => $q->orderBy($request->sortBy)
+            )
+            ->when($request->desc, fn($q) => $q->orderBy('created_at', 'desc'))
+            ->when(
+                $request->first_name,
+                fn($q) => $q->where(
+                    'first_name',
+                    'like',
+                    '%'.$request->first_name.'%'
+                )
+            )
+            ->when(
+                $request->email,
+                fn($q) => $q->where('email', 'like', '%'.$request->email.'%')
+            )
+            ->when(
+                $request->phone,
+                fn($q) => $q->where(
+                    'phone_number',
+                    'like',
+                    '%'.$request->phone.'%'
+                )
+            )
+            ->when(
+                $request->address,
+                fn($q) => $q->where(
+                    'address',
+                    'like',
+                    '%'.$request->address.'%'
+                )
+            )
+            ->when(
+                $request->created_at,
+                fn($q) => $q->whereDate('created_at', $request->created_at)
+            )
+            ->when(
+                isset($request->marketing),
+                fn($q) => $q->where('is_marketing', $request->marketing)
+            )
+            ->paginate($request->limit ? $request->limit : 10);
+    }
+
+    public function findAndUpdate(UpdateRequest $request, string $uuid): User
+    {
+        $user = $this->where('uuid', $uuid)->firstOrFail();
+        $user->update($request->validated());
+        return $user;
+    }
+
+    public function refreshToken(Request $request): string
+    {
+        return JWT::encode(
+            [
+                'user_uuid' => $this->uuid,
+                'iss'       => $request->getSchemeAndHttpHost(),
+                'exp'       => time() + 60 * 60 * 10,
+            ],
+            config('jwt.key'),
+            'HS256'
         );
     }
 
