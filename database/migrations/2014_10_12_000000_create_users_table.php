@@ -16,11 +16,11 @@ return new class extends Migration {
             'users',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->uuid('uuid');
+                $table->uuid('uuid')->unique();
                 $table->string('first_name');
                 $table->string('last_name');
                 $table->tinyInteger('is_admin')->default(0);
-                $table->string('email')->unique();
+                $table->string('email');
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');
                 $table->char('avatar', 36)->nullable();
