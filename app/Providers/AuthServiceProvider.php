@@ -36,15 +36,18 @@ class AuthServiceProvider extends ServiceProvider
             'jwt',
             function (Request $request) {
                 try {
-                    $tokenPayload = JWT::decode(
-                        $request->bearerToken(),
-                        new Key(
-                            config('jwt.key'),
-                            'HS256'
-                        )
-                    );
-                    return User::where('uuid', $tokenPayload->user_uuid)->first(
-                    );
+                    if ($request->bearerToken()) {
+                        $tokenPayload = JWT::decode(
+                            $request->bearerToken(),
+                            new Key(
+                                config('jwt.key'),
+                                'HS256'
+                            )
+                        );
+                        return User::where('uuid', $tokenPayload->user_uuid)
+                            ->first();
+                    }
+                    return null;
                 } catch (\Exception $exception) {
                     return null;
                 }
