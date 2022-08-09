@@ -192,7 +192,8 @@ class User extends Authenticatable
     public function findAndUpdate(UpdateRequest $request, string $uuid): User
     {
         $user = $this->where('uuid', $uuid)->firstOrFail();
-        $user->update($request->validated());
+        $request->merge(['is_marketing' => $request->is_marketing ?? 0]);
+        $user->update($request->all());
         return $user;
     }
 
