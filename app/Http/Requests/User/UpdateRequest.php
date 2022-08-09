@@ -32,10 +32,10 @@ class UpdateRequest extends FormRequest
             'email'                 => 'required|email|max:255',
             'password'              => 'required|string|min:8',
             'password_confirmation' => 'required|string|same:password',
-            'avatar'                => 'sometimes|string|max:36',
+            'avatar'                => 'sometimes|max:36',
             'address'               => 'required|string',
             'phone_number'          => 'required|string',
-            'is_marketing'          => 'sometimes|string',
+            'is_marketing'          => 'sometimes',
         ];
     }
 
