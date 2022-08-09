@@ -59,7 +59,7 @@ class UserService
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 return [
-                    'token' => $this->user->refreshToken($request)
+                    'token' => $user->refreshToken($request)
                 ];
             }
         }
