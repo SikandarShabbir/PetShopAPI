@@ -126,7 +126,7 @@ class User extends Authenticatable
         );
         return [
             ...$user->toArray(),
-            'token' => $this->refreshToken($request),
+            'token' => $user->refreshToken($request),
         ];
     }
 
@@ -202,7 +202,7 @@ class User extends Authenticatable
             [
                 'user_uuid' => $this->uuid,
                 'iss'       => $request->getSchemeAndHttpHost(),
-                'exp'       => time() + 60 * 60 * 10,
+                'exp'       => time() + 60 * 60 * 2,
             ],
             config('jwt.key'),
             'HS256'
