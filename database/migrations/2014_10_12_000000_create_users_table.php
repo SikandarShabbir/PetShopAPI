@@ -23,7 +23,7 @@ return new class extends Migration {
                 $table->string('email');
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');
-                $table->char('avatar', 36)->nullable();
+                $table->uuid('avatar')->nullable();
                 $table->string('address');
                 $table->string('phone_number');
                 $table->tinyInteger('is_marketing')->default(0);
