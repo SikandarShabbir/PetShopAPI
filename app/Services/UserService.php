@@ -1,15 +1,12 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use phpDocumentor\Reflection\Types\Never_;
 
 class UserService
 {
@@ -51,7 +48,7 @@ class UserService
     /**
      * @param  Request  $request
      *
-     * @return array|void
+     * @return array<string,string>|void
      */
     public function authenticateUser(Request $request)
     {
@@ -59,7 +56,7 @@ class UserService
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 return [
-                    'token' => $user->refreshToken($request)
+                    'token' => $user->refreshToken($request),
                 ];
             }
         }
@@ -78,7 +75,7 @@ class UserService
                     "data"    => [],
                     "error"   => $error,
                     "errors"  => [],
-                    "trace"   => []
+                    "trace"   => [],
                 ],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             )

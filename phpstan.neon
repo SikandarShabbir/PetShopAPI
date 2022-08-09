@@ -14,6 +14,9 @@ parameters:
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
+        - ./app/Http/Resources/UserResource.php
+        - ./app/Http/Controllers/ProductController.php
+        - ./app/Providers/RouteServiceProvider.php
 
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false

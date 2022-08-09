@@ -98,7 +98,7 @@ class User extends Authenticatable
             'remember_token',
             'id',
             'avatar',
-            'is_admin'
+            'is_admin',
         ];
 
     /**
@@ -192,7 +192,7 @@ class User extends Authenticatable
     public function findAndUpdate(UpdateRequest $request, string $uuid): User
     {
         $user = $this->where('uuid', $uuid)->firstOrFail();
-        $request->merge(['is_marketing' => $request->is_marketing ?? 0]);
+        $request->merge(['is_marketing' => $request->is_marketing ? 1 : 0]);
         $user->update($request->all());
         return $user;
     }
