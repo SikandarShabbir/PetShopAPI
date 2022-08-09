@@ -28,7 +28,7 @@ class IndexRequest extends FormRequest
     {
         return [
             'page'       => 'sometimes|integer',
-            'limit'      => 'sometimes|integer',
+            'limit'      => 'sometimes|integer|min:1',
             'sortBy'     => 'sometimes|string',
             'desc'       => 'sometimes|boolean',
             'first_name' => 'sometimes|string',
@@ -38,6 +38,36 @@ class IndexRequest extends FormRequest
             'created_at' => 'sometimes|string',
             'marketing'  => 'sometimes|string',
         ];
+    }
+
+    /**
+     * Prepare inputs for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            [
+                'desc' => $this->toBoolean($this->desc),
+            ]
+        );
+    }
+
+    /**
+     * Convert to boolean
+     *
+     * @param $boolable
+     *
+     * @return bool|null
+     */
+    private function toBoolean($boolable)
+    {
+        return filter_var(
+            $boolable,
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        );
     }
 
     public function failedValidation(Validator $validator)
