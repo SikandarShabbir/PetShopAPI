@@ -35,7 +35,7 @@ class StoreRequest extends FormRequest
             'avatar'                => 'required|string|max:36',
             'address'               => 'required|string',
             'phone_number'          => 'required|string',
-            'marketing'             => 'sometimes|string',
+            'marketing'             => 'sometimes',
         ];
     }
 
