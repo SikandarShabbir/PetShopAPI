@@ -492,5 +492,37 @@ class UserTest extends TestCase
             ]
         )->assertStatus(200);
     }
-    
+
+    //  Access Admin Resources with user Account
+    public function test_checking_user_account_has_no_access_to_admin_side_routes(
+    )
+    {
+        $user = User::where('is_admin', 0)->latest()->first();
+        $response = $this->post(
+            '/api/v1/admin/login',
+            [
+                'email' => $user ?->email,
+                'password' => 'password'
+            ]
+        );
+        $token = $response->getOriginalContent()['data']['token'];
+        $response = $this->deleteJson(
+            '/api/v1/admin/user-delete/'.$user ?->uuid,
+            [],
+            [
+                'Authorization' => 'Bearer '.$token,
+                'Accept'        => 'application/json'
+            ]
+        );
+
+        $response->assertJson(
+            [
+                'success' => 0,
+                'data'    => [],
+                'error'   => 'Unauthorized',
+                'errors'  => [],
+                'trace'   => [],
+            ]
+        )->assertStatus(401);
+    }
 }
