@@ -102,4 +102,23 @@ class UserTest extends TestCase
         )->assertStatus(200);
     }
 
+//    Admin logout API endpoint
+    public function test_checking_if_the_admin_logout_gives_successful_response(
+    )
+    {
+        $response = $this->get(
+            '/api/v1/admin/logout'
+        );
+
+        $response->assertJson(
+            [
+                'success' => 1,
+                'data'    => [],
+                'error'   => null,
+                'errors'  => [],
+                'extra'   => []
+            ]
+        )->assertStatus(200);
+    }
+
 }
