@@ -425,5 +425,72 @@ class UserTest extends TestCase
             ]
         )->assertStatus(200);
     }
+
+    //    Admin delete API Endpoint
+    public function test_do_not_allow_deleting_a_user_that_does_not_exist_in_system(
+    )
+    {
+        $uuid = User::where('is_admin', 1)->value('uuid');
+        $response = $this->post(
+            '/api/v1/admin/login',
+            [
+                'email'    => 'admin@gmail.com',
+                'password' => 'admin'
+            ]
+        );
+
+        $token = $response->getOriginalContent()['data']['token'];
+        $response = $this->deleteJson(
+            '/api/v1/admin/user-delete/'.$uuid,
+            [],
+            [
+                'Authorization' => 'Bearer '.$token,
+                'Accept'        => 'application/json'
+            ]
+        );
+
+        $response->assertJson(
+            [
+                'success' => 0,
+                'data'    => [],
+                'error'   => 'Unauthorized: Not enough privileges',
+                'errors'  => [],
+                'trace'   => [],
+            ]
+        )->assertStatus(422);
+    }
+
+    public function test_deleting_a_user_account()
+    {
+        $user = User::where('is_admin', 0)->latest()->first();
+        $response = $this->post(
+            '/api/v1/admin/login',
+            [
+                'email'    => 'admin@gmail.com',
+                'password' => 'admin'
+            ]
+        );
+
+        $token = $response->getOriginalContent()['data']['token'];
+
+        $response = $this->deleteJson(
+            '/api/v1/admin/user-delete/'.$user ?->uuid,
+            [],
+            [
+                'Authorization' => 'Bearer '.$token,
+                'Accept'        => 'application/json'
+            ]
+        );
+
+        $response->assertJson(
+            [
+                'success' => 1,
+                'data'    => [],
+                'error'   => null,
+                'errors'  => [],
+                'extra'   => [],
+            ]
+        )->assertStatus(200);
+    }
     
 }
