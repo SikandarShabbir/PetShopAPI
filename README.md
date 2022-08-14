@@ -41,6 +41,11 @@
 
 And test the PetShopAPI Demo.
 
+
+## Running Laravel PHPUnit test
+   - Run `php artisan test` 
+
+
 ## Code quality and static analysis
  **Tools like larastan, phpinsights and IDE helper are also configured with the project.**
  - To Analyze the code quality 
@@ -56,5 +61,5 @@ And test the PetShopAPI Demo.
     - PHPDocs for models 
         - Run `php artisan ide-helper:models`
 
-
+   
 Thanks.
