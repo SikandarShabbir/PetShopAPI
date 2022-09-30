@@ -16,13 +16,14 @@ return new class extends Migration {
             'products',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->uuid('uuid');
-                $table->foreignId('category_id')->nullable()->constrained()
-                    ->nullOnDelete();
-                $table->string('title');
+                $table->string('name');
                 $table->double('price', 12, 2);
-                $table->text('description');
-                $table->json('metadata');
+                $table->double('cost', 12, 2);
+                $table->text('description')->nullable();
+                $table->tinyInteger('units_and_info')->nullable();
+                $table->string('unit')->nullable();
+                $table->string('weight_per_unit')->nullable();
+                $table->json('image_urls');
                 $table->timestamps();
                 $table->softDeletes();
             }
