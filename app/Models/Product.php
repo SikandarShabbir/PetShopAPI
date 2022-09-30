@@ -42,19 +42,11 @@ class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
-    protected $fillable
-        = [
-            'uuid',
-            'category_id',
-            'title',
-            'price',
-            'description',
-            'metadata',
-        ];
+    
+    protected $guarded = [];
 
     protected $casts
         = [
-            'metadata' => 'array'
+            'image_urls' => 'array'
         ];
 }
