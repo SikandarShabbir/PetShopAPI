@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -42,11 +43,25 @@ class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
-    protected $guarded = [];
 
+    protected $guarded = [];
+    protected $hidden
+        = [
+            'deleted_at',
+            'created_at',
+            'updated_at',
+        ];
     protected $casts
         = [
-            'image_urls' => 'array'
+            'imageUrls' => 'array'
         ];
+    public static $snakeAttributes = false;
+
+    public function unitsAndInfo(): Attribute
+    {
+        return new Attribute(
+            fn($value) => (bool)$value,
+            fn($value) => $value,
+        );
+    }
 }
