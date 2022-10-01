@@ -22,8 +22,17 @@ class ProductController extends Controller
             ? $request->size : 10;
         $offset = ($page_num - 1) * $no_of_records_per_page;
 
-        $products = Product::skip($offset)
+        $query = Product::query();
+        $query->when(
+            $request->search,
+            function ($q) {
+                return $q->where('name', 'like', '%'.request('search').'%')
+                    ->orWhere('description', 'like', '%'.request('search').'%');
+            }
+        );
+        $products = $query->skip($offset)
             ->take($no_of_records_per_page)
+            ->orderBy('id', 'desc')
             ->get();
 
         return response()->json(
@@ -51,12 +60,11 @@ class ProductController extends Controller
         $product->cost = $request->cost ? $request->cost : null;
         $product->description = $request->description ? $request->description
             : null;
-        $product->units_and_info = $request->units_and_info
-            ? $request->units_and_info : null;
+        $product->unitsAndInfo = $request->has('unitsAndInfo');
         $product->unit = $request->unit ? $request->unit : null;
-        $product->weight_per_unit = $request->weight_per_unit
-            ? $request->weight_per_unit : null;
-        $product->image_urls = $request->image_urls ? $request->image_urls
+        $product->weightPerUnit = $request->weightPerUnit
+            ? $request->weightPerUnit : null;
+        $product->imageUrls = $request->imageUrls ? $request->imageUrls
             : null;
         $product->save();
 

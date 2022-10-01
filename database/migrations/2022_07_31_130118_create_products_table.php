@@ -20,10 +20,10 @@ return new class extends Migration {
                 $table->double('price', 12, 2);
                 $table->double('cost', 12, 2);
                 $table->text('description')->nullable();
-                $table->tinyInteger('units_and_info')->nullable();
+                $table->boolean('unitsAndInfo')->default(false);
                 $table->string('unit')->nullable();
-                $table->string('weight_per_unit')->nullable();
-                $table->json('image_urls');
+                $table->string('weightPerUnit')->nullable();
+                $table->json('imageUrls');
                 $table->timestamps();
                 $table->softDeletes();
             }
