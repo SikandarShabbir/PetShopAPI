@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('product', ProductController::class);
+Route::apiResource('products', ProductController::class);
 
 Route::prefix('v1/admin')->name('admin.')->group(
     function (): void {
